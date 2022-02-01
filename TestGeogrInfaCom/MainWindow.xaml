@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestGeogrInfaCom"
         xmlns:resx="clr-namespace:TestGeogrInfaCom.Properties"
-        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" xmlns:dxct="http://schemas.devexpress.com/winfx/2008/xaml/charts/themekeys"  
         x:Class="TestGeogrInfaCom.MainWindow"
         mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
         Title="Тестовое задание" MaxHeight="730" Height="730" MinWidth="520" MaxWidth="520">
     <Window.DataContext>
         <local:VM/>

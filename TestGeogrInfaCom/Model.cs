@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
+using System.Windows;
 
 namespace TestGeogrInfaCom
 {
 
-    class Model:ObservableObject
+    class Model : ObservableObject
     {
         ApplicationContext _db;
 
@@ -90,14 +86,32 @@ namespace TestGeogrInfaCom
 
         public Model()
         {
-            _db = new ApplicationContext();
-            
+            try
+            {
+                _db = new ApplicationContext();
+            }
+            catch
+            {
+                Application.Current?.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Не обнаружена тестовая база данных!");
+                    Environment.Exit(0);
+                });
+
+            }
+
+            Thread myThread = new Thread(new ThreadStart(LoadTables));
+            myThread.Start();
+
+        }
+
+        public void LoadTables()
+        {
             _db.TestVariables.Load();
 
             _db.CalculatedData.Load();
 
             AllVariables = _db.TestVariables.Select(v => v.var).Distinct().ToList();
-
         }
 
         public async Task GetVariables(int variable)
@@ -112,7 +126,7 @@ namespace TestGeogrInfaCom
         {
             await Task.Run(() =>
             {
-                ResultData = TestVariables.Select(fx=> new Result() { var = fx.val * fx.var, val=fx.val }).ToList();
+                ResultData = TestVariables.Select(fx => new Result() { var = fx.val * fx.var, val = fx.val }).ToList();
                 _db.CalculatedData.AddRange(ResultData);
                 _db.SaveChanges();
             });
@@ -122,7 +136,7 @@ namespace TestGeogrInfaCom
         {
             await Task.Run(() =>
             {
-                ExportToExcel.CreateTestExcelFile(filepath,ResultData);
+                ExportToExcel.CreateTestExcelFile(filepath, ResultData);
             });
         }
 
