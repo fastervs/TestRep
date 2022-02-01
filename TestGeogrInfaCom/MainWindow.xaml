@@ -1,0 +1,126 @@
+﻿<Window xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts"  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestGeogrInfaCom"
+        xmlns:resx="clr-namespace:TestGeogrInfaCom.Properties"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars" xmlns:dxct="http://schemas.devexpress.com/winfx/2008/xaml/charts/themekeys"  
+        x:Class="TestGeogrInfaCom.MainWindow"
+        mc:Ignorable="d"
+        Title="Тестовое задание" MaxHeight="730" Height="730" MinWidth="520" MaxWidth="520">
+    <Window.DataContext>
+        <local:VM/>
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="200"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <dxe:ComboBoxEdit 
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top" 
+                ItemsSource="{Binding Model.AllVariables, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                EditValue="{Binding Model.SelectedVariable}"
+                Height="30"
+                Margin="0 5"
+                Width="250" 
+                x:Name="ComboBoxEdit1"/>
+        <Button Grid.Row="0"
+                Grid.Column="1"
+                Content="{x:Static resx:Resources.GetVariableValues}"
+                Width="167"
+                Height="25"
+                Command="{Binding ShowTable}"
+                />
+        <dxg:GridControl
+                x:Name="Xresult"
+                AutoGenerateColumns="None" 
+                MaxHeight="250"
+                Margin="0 5"
+                Width="300"
+                Grid.Column="0"
+                Grid.Row="1"
+                ItemsSource="{Binding Model.TestVariables, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            >
+            <dxg:GridColumn Binding="{Binding var}"
+                    Header="{x:Static resx:Resources.ColumnNameVar}"
+                            />
+            <dxg:GridColumn Binding="{Binding val}"
+                    Header="{x:Static resx:Resources.ColumnNameVal}"
+                            />
+        </dxg:GridControl>
+        <Button Grid.Row="1"
+                IsEnabled="{Binding Model.HasData}"
+                Content="{x:Static resx:Resources.CalculateFx}"
+                Command="{Binding Calculate}"
+                Width="167"
+                Height="25"
+                Grid.Column="1"
+                />
+        <dxg:GridControl
+                AutoGenerateColumns="None" 
+                MaxHeight="250"
+                Margin="0 5"
+                Width="300"
+                Grid.Column="0"
+                ItemsSource="{Binding Model.ResultData}"
+                Grid.Row="2">
+            <dxg:GridColumn 
+                Binding="{Binding var}"
+                Header="{x:Static resx:Resources.ColumnNameVar}"
+                dxg:ColumnBase.ReadOnly="true"
+                            />
+            <dxg:GridColumn 
+                Binding="{Binding val}"
+                Header="{x:Static resx:Resources.ColumnNameVal}"
+                dxg:ColumnBase.ReadOnly="true"
+                            />
+        </dxg:GridControl>
+        <Button Grid.Row="2"
+                IsEnabled="{Binding Model.HasResult}"
+                Content="{x:Static resx:Resources.SaveXLSX}"
+                Width="167"
+                Height="25"
+                Grid.Column="1"
+                Command="{Binding SaveXlsx}"
+                />
+        <dxc:ChartControl 
+            x:Name="chart"
+            DataSource="{Binding Model.ResultData}"
+            Margin="0 5"
+            Grid.Row="3"
+            Width="480"
+            HorizontalAlignment="Left"
+            Grid.ColumnSpan="2"               
+            MaxHeight="210">
+            <dxc:ChartControl.Titles>
+                <dxc:Title Content="{x:Static resx:Resources.GraphHeader}" />
+            </dxc:ChartControl.Titles>
+            <dxc:ChartControl.Diagram>
+                <dxc:XYDiagram2D>
+                    <dxc:XYDiagram2D.Series>
+                        <dxc:LineSeries2D Name="ResultSeries" ArgumentDataMember="Var" ValueDataMember="Val" />
+                    </dxc:XYDiagram2D.Series>
+                </dxc:XYDiagram2D>
+            </dxc:ChartControl.Diagram>
+        </dxc:ChartControl>
+        <Label 
+            Grid.Row="4"
+            Content="{x:Static resx:Resources.OnCalculation}"  
+            Visibility="{Binding IsBusy}"></Label>
+    </Grid>
+</Window>
